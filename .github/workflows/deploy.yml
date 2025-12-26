@@ -42,8 +42,8 @@ jobs:
             echo "→ Instalando dependencias"
             pip install --upgrade -r requirements.txt
 
-            echo "→ Reiniciando servicio systemd"
-            sudo systemctl restart "${{ secrets.AWS_SERVICE }}"
+            #echo "→ Reiniciando servicio systemd"
+            #sudo systemctl restart "${{ secrets.AWS_SERVICE }}"
 
             echo "→ DESPLIEGUE COMPLETO"
           EOF
