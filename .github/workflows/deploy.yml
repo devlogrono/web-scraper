@@ -1,0 +1,49 @@
+name: CI + CD - Deploy to AWS (Production)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Preparar SSH
+      - name: Prepare SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.AWS_SSH_KEY }}" > ~/.ssh/aws_deploy_key
+          chmod 600 ~/.ssh/aws_deploy_key
+          echo "${{ secrets.AWS_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      # Deploy
+      - name: Deploy to AWS EC2
+        run: |
+          ssh -i ~/.ssh/aws_deploy_key \
+              ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }} << 'EOF'
+            set -e
+
+            echo "→ Navegando a la carpeta del proyecto"
+            cd "${{ secrets.APP_PATH }}"
+
+            echo "→ Actualizando código"
+            git pull origin main
+
+            echo "→ Activando entorno virtual"
+            source "${{ secrets.AWS_VENV_PATH }}/bin/activate"
+
+            echo "→ Instalando dependencias"
+            pip install --upgrade -r requirements.txt
+
+            echo "→ Reiniciando servicio systemd"
+            sudo systemctl restart "${{ secrets.AWS_SERVICE }}"
+
+            echo "→ DESPLIEGUE COMPLETO"
+          EOF
