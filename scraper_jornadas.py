@@ -45,6 +45,29 @@ ACTA_BTN_SELECTOR = 'a.btn.btn-sm.btn-success[href*="NFG_CmpPartido"]'
 TEAM_LINK_SELECTOR = 'span.font_widgetL a[href*="NFG_VisEquipos"]'
 TEAM_BADGE_SELECTOR = "img.escudo_clb"
 
+def get_rfef_driver() -> uc.Chrome:
+    options = uc.ChromeOptions()
+
+    # Chrome for Testing 124 (OBLIGATORIO)
+    options.binary_location = "/home/ec2-user/chrome/chrome-linux64/chrome"
+
+    # Flags obligatorios en EC2
+    options.add_argument("--headless=new")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-gpu")
+
+    # Anti-detección (bien usados)
+    options.add_argument("--disable-blink-features=AutomationControlled")
+    options.add_argument("--lang=es-ES")
+
+    return uc.Chrome(
+        options=options,
+        version_main=RFEF_CHROME_VERSION_MAIN,
+        use_subprocess=True,
+    )
+
+
 
 def _get_first_row_tds(block: BeautifulSoup) -> List[BeautifulSoup]:
     tbl = block.find("table", recursive=False) or block.find("table")
@@ -376,7 +399,9 @@ def _assign_rfef_actas_by_fuzzy(
 
 def _test_rfef_1ff(session: requests.Session) -> None:
     options = uc.ChromeOptions()
-    driver = uc.Chrome(options=options, version_main=RFEF_CHROME_VERSION_MAIN)
+    #driver = uc.Chrome(options=options, version_main=RFEF_CHROME_VERSION_MAIN)
+    driver = get_rfef_driver()
+
     try:
         meta = COMPETITIONS["1FF"]
         jornadas = meta["jornadas"]
@@ -543,17 +568,19 @@ def build_jornadas_df(session: requests.Session) -> pd.DataFrame:
         log.info("Scrapeando %s - %s", hoja, meta["competicion_nombre"])
         if meta.get("competicion_nombre") == "1FF":
             # Crear un driver propio para 1FF y cerrarlo justo al terminar
-            options = uc.ChromeOptions()
-            options.add_argument("--disable-gpu")
-            options.add_argument("--no-sandbox")
-            options.add_argument("--disable-dev-shm-usage")
-            options.add_argument("--disable-blink-features=AutomationControlled")
-            options.add_argument("--lang=es-ES")
-            rfef_driver = uc.Chrome(
-                options=options,
-                version_main=RFEF_CHROME_VERSION_MAIN,
-                use_subprocess=True,
-            )
+            # options = uc.ChromeOptions()
+            # options.add_argument("--disable-gpu")
+            # options.add_argument("--no-sandbox")
+            # options.add_argument("--disable-dev-shm-usage")
+            # options.add_argument("--disable-blink-features=AutomationControlled")
+            # options.add_argument("--lang=es-ES")
+            # rfef_driver = uc.Chrome(
+            #     options=options,
+            #     version_main=RFEF_CHROME_VERSION_MAIN,
+            #     use_subprocess=True,
+            # )
+            rfef_driver = get_rfef_driver()
+
             try:
                 df = scrape_competition(session, hoja, meta, rfef_driver=rfef_driver)
             finally:
