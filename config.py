@@ -51,6 +51,7 @@ RFEF_RESULTADOS_URL_TEMPLATE = (
 
 # Versión mayor de Chrome instalada en el sistema (para undetected_chromedriver)
 RFEF_CHROME_VERSION_MAIN = 142
+RFEF_CHROME_VERSION_MAIN_AWS = 124
 
 # Parámetros para scrapear actas RFEF de forma más lenta / humana
 # Si RFEF_SLOW_MODE es True, se aplican esperas largas y aleatorias entre peticiones
