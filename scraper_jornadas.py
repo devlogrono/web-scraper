@@ -28,6 +28,7 @@ from .config import (
     RFEF_1FF_GROUP,
     RFEF_RESULTADOS_URL_TEMPLATE,
     RFEF_CHROME_VERSION_MAIN,
+    RFEF_CHROME_VERSION_MAIN_AWS
 )
 from .competitions import COMPETITIONS, JORNADA_URL_TEMPLATE
 from .http_client import create_session, is_login_page, login
@@ -63,10 +64,9 @@ def get_rfef_driver() -> uc.Chrome:
 
     return uc.Chrome(
         options=options,
-        version_main=RFEF_CHROME_VERSION_MAIN,
+        version_main=RFEF_CHROME_VERSION_MAIN_AWS,
         use_subprocess=True,
     )
-
 
 
 def _get_first_row_tds(block: BeautifulSoup) -> List[BeautifulSoup]:
