@@ -146,7 +146,7 @@ La diferencia principal entre entornos es la configuración de Google Chrome uti
 El scraper se ejecuta como módulo Python, desde fuera del directorio del proyecto, tal como se viene haciendo actualmente.
 
 ```bash
-python -m web_scraper.main
+python -m web-scraper.main
 ```
 
 En este modo:
@@ -159,7 +159,7 @@ En este modo:
 Para ejecutar el scraper en local manteniendo el mismo esquema de ejecución por módulo, es necesario indicar explícitamente el entorno mediante el parámetro --env.
 
 ```bash
-python -m web_scraper.main --env=local
+python -m web-scraper.main --env=local
 ```
 
 En este modo:
@@ -175,7 +175,7 @@ En este modo:
 Ejecutar el scraper en segundo plano:
 
 ```bash
-nohup python -m web_scraper.main &
+nohup python -m web-scraper.main &
 ```
 
 Comprobar proceso:
