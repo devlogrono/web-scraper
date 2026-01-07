@@ -12,7 +12,7 @@ from pandas.api.types import CategoricalDtype
 import requests
 from bs4 import BeautifulSoup
 
-from .config import BASE_URL, HTTP_HEADERS, ENGINE, OUTPUT_COMPETICIONES_CSV
+from .config import BASE_URL, HTTP_HEADERS, ENGINE, OUTPUT_COMPETICIONES_CSV, ESCUDOS_DIR
 from .competitions import COMPETITIONS, JORNADA_URL_TEMPLATE
 from .http_client import create_session, is_login_page, login
 
@@ -155,7 +155,7 @@ def build_competiciones_df(session: requests.Session) -> pd.DataFrame:
     """
 
     rows: List[Dict[str, str]] = []
-    escudos_root = Path("escudos")
+    escudos_root = Path(ESCUDOS_DIR)
     escudos_root.mkdir(exist_ok=True)
 
     order = ["1FF", "3FFF", "1J", "1C", "CFF", "1I", "IFF"]

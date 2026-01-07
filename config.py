@@ -40,6 +40,7 @@ TEMPORADA_ID = 21
 # ===============================
 LOGS_DIR = PROJECT_ROOT / "logs"
 CSV_DIR = PROJECT_ROOT / "csv"
+ESCUDOS_DIR = PROJECT_ROOT / "escudos"
 
 # ===============================
 # Rutas de salida CSV
