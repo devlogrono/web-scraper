@@ -4,7 +4,13 @@ import os
 from sqlalchemy import create_engine
 import pymysql
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
+#PROJECT_ROOT = Path(__file__).resolve().parents[1]
+PROJECT_ROOT = Path(__file__).resolve().parent
+
+# ===============================
+# Entorno de ejecución
+# ===============================
+DEFAULT_ENV = "aws"  # aws por defecto
 
 DB_HOST = "dbdux.cd2ay8iog7ao.eu-north-1.rds.amazonaws.com"
 DB_PORT = 3306
@@ -29,10 +35,19 @@ FRF_PASS = os.getenv("FRF_PASS", "DuxLogrono2021")
 TEMPORADA = "2025-2026"
 TEMPORADA_ID = 21
 
-OUTPUT_ACTAS_CSV = PROJECT_ROOT / "actas.csv"
-OUTPUT_SUSTITUCIONES_CSV = PROJECT_ROOT / "sustituciones.csv"
-OUTPUT_JORNADAS_CSV = PROJECT_ROOT / "jornadas.csv"
-OUTPUT_COMPETICIONES_CSV = PROJECT_ROOT / "competiciones.csv"
+# ===============================
+# Directorios del proyecto
+# ===============================
+LOGS_DIR = PROJECT_ROOT / "logs"
+CSV_DIR = PROJECT_ROOT / "csv"
+
+# ===============================
+# Rutas de salida CSV
+# ===============================
+OUTPUT_COMPETICIONES_CSV = CSV_DIR / "competiciones.csv"
+OUTPUT_JORNADAS_CSV = CSV_DIR / "jornadas.csv"
+OUTPUT_ACTAS_CSV = CSV_DIR / "actas.csv"
+OUTPUT_SUSTITUCIONES_CSV = CSV_DIR / "sustituciones.csv"
 
 TABLES_TO_COMPARE = ["competiciones", "jornadas", "actas", "sustituciones"]
 

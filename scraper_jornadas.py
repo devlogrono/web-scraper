@@ -46,25 +46,33 @@ ACTA_BTN_SELECTOR = 'a.btn.btn-sm.btn-success[href*="NFG_CmpPartido"]'
 TEAM_LINK_SELECTOR = 'span.font_widgetL a[href*="NFG_VisEquipos"]'
 TEAM_BADGE_SELECTOR = "img.escudo_clb"
 
-def get_rfef_driver() -> uc.Chrome:
+def get_rfef_driver(env: str = "aws") -> uc.Chrome:
     options = uc.ChromeOptions()
 
-    # Chrome for Testing 124 (OBLIGATORIO)
-    options.binary_location = "/home/ec2-user/chrome/chrome-linux64/chrome"
+    if env == "aws":
+        # Solo en AWS (Chrome for Testing)
+        options.binary_location = "/home/ec2-user/chrome/chrome-linux64/chrome"
 
-    # Flags obligatorios en EC2
-    options.add_argument("--headless=new")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--disable-gpu")
-
+        # Flags obligatorios en EC2
+        options.add_argument("--headless=new")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--disable-gpu")
+    #else:
+    #    options.add_argument("--headless=new")
+    
     # Anti-detección (bien usados)
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--lang=es-ES")
 
+    if env == "local":
+        chrome_version_main = RFEF_CHROME_VERSION_MAIN
+    else:
+        chrome_version_main = RFEF_CHROME_VERSION_MAIN_AWS
+
     return uc.Chrome(
         options=options,
-        version_main=RFEF_CHROME_VERSION_MAIN_AWS,
+        version_main=chrome_version_main,
         use_subprocess=True,
     )
 
@@ -397,10 +405,9 @@ def _assign_rfef_actas_by_fuzzy(
     )
 
 
-def _test_rfef_1ff(session: requests.Session) -> None:
-    options = uc.ChromeOptions()
-    #driver = uc.Chrome(options=options, version_main=RFEF_CHROME_VERSION_MAIN)
-    driver = get_rfef_driver()
+def _test_rfef_1ff(session: requests.Session, env: str = "aws") -> None:
+    
+    driver = get_rfef_driver(env=env)
 
     try:
         meta = COMPETITIONS["1FF"]
@@ -526,7 +533,7 @@ def scrape_competition(session: requests.Session, hoja: str, meta: Dict, rfef_dr
     return df
 
 
-def build_jornadas_df(session: requests.Session) -> pd.DataFrame:
+def build_jornadas_df(session: requests.Session, env: str = "aws") -> pd.DataFrame:
     """Scrapea todas las jornadas y devuelve el DataFrame en memoria.
 
     No escribe CSV ni tablas SQL; eso se hace en la capa orquestadora (main o run).
@@ -567,19 +574,8 @@ def build_jornadas_df(session: requests.Session) -> pd.DataFrame:
     for hoja, meta in COMPETITIONS.items():
         log.info("Scrapeando %s - %s", hoja, meta["competicion_nombre"])
         if meta.get("competicion_nombre") == "1FF":
-            # Crear un driver propio para 1FF y cerrarlo justo al terminar
-            # options = uc.ChromeOptions()
-            # options.add_argument("--disable-gpu")
-            # options.add_argument("--no-sandbox")
-            # options.add_argument("--disable-dev-shm-usage")
-            # options.add_argument("--disable-blink-features=AutomationControlled")
-            # options.add_argument("--lang=es-ES")
-            # rfef_driver = uc.Chrome(
-            #     options=options,
-            #     version_main=RFEF_CHROME_VERSION_MAIN,
-            #     use_subprocess=True,
-            # )
-            rfef_driver = get_rfef_driver()
+
+            rfef_driver = get_rfef_driver(env=env)
 
             try:
                 df = scrape_competition(session, hoja, meta, rfef_driver=rfef_driver)
